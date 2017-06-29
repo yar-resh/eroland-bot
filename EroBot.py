@@ -34,7 +34,7 @@ class EroBot:
         }
         try:
             result = self._session.get(url=url, params=params)
-            print(result.json())
+            logger.info(result.json())
         except Exception as e:
             logger.error(str(e))
 

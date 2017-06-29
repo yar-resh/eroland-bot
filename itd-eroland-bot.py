@@ -20,13 +20,15 @@ from Logger import logger
 
 from EroBot import EroBot
 from OboobsCrawler import OboobsCrawler
+from ObuttsCrawler import ObuttsCrawler
 
 
 CHUNK_SIZE = 1024 * 48500
 CONTENT_DIR = dirname(abspath(__file__)) + '/content'
 
 bot = EroBot()
-crawler = OboobsCrawler()
+boobs_crawler = OboobsCrawler()
+butts_crawler = ObuttsCrawler()
 session = Session()
 
 def _get_extension(content_type: str):
@@ -76,13 +78,23 @@ def parse_updates(updates_result):
         return results
     return []
 
-def get_noise():
-    preview_urls = crawler.crawl_noise()
+def get_boobs():
+    preview_urls = boobs_crawler.crawl_noise()
     images_url = []
     for preview in preview_urls:
         url = 'http://media.oboobs.ru/{preview}'.format(preview=preview)
         images_url.append(url)
     return images_url
+
+
+def get_butts():
+    preview_urls = butts_crawler.crawl_noise()
+    images_url = []
+    for preview in preview_urls:
+        url = 'http://media.obutts.ru/{preview}'.format(preview=preview)
+        images_url.append(url)
+    return images_url
+
 
 def main():
     # # If previously removing was unsuccessful
@@ -97,10 +109,15 @@ def main():
         if updates_result:
             for update in parse_updates(updates_result):
                 bot.last_update_id = update['update_id'] if update['update_id'] > bot.last_update_id else bot.last_update_id
-                if update['text'] == '/noise':
-                    urls = get_noise()
+                if update['text'] in ['/boobs', '/noise']:
+                    urls = get_boobs()
                     for url in urls:
-                        bot.send_message(url, update['chat_id'])
+                        bot.send_message(url, update['chat_id'], disable_notification=True)
+                        sleep(1)
+                elif update['text'] == '/butts':
+                    urls = get_butts()
+                    for url in urls:
+                        bot.send_message(url, update['chat_id'], disable_notification=True)
                         sleep(1)
 
         sleep(2)
