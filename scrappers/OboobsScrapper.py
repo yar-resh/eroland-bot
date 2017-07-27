@@ -9,8 +9,6 @@ class OboobsScrapper(EroScrapper):
     }
     _IDENTIFIER = 'oboobs'
 
-    def __init__(self): pass
-
     def get_images(self, *args):
         super().get_images(*args)
 
@@ -28,8 +26,8 @@ class OboobsScrapper(EroScrapper):
 
     def get_instruction(self):
         instruction = self.scrapper_name + '\n'
-        instruction += str.join("", [
-            "/{identifier} {command}:\t\t{usage}\n".format(
+        instruction += str.join('', [
+            '/{identifier} {command}:\t\t{usage}\n'.format(
                 command=command,
                 usage=usage,
                 identifier=self.identifier) for command, usage in self._COMMANDS.items()

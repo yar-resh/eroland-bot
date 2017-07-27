@@ -1,4 +1,4 @@
-from abc import ABC, abstractclassmethod
+from abc import ABC, abstractmethod
 
 
 class EroScrapper(ABC):
@@ -6,7 +6,7 @@ class EroScrapper(ABC):
     An interface for scrappers
     """
 
-    @abstractclassmethod
+    @abstractmethod
     def get_images(self, *args):
         """
         Returns collection of urls depending on passed commands
@@ -15,20 +15,20 @@ class EroScrapper(ABC):
         """
 
     @property
-    @abstractclassmethod
+    @abstractmethod
     def commands(self):
         """
         :return: collection of available commands that uses for scrapping
         """
-    @abstractclassmethod
+    @abstractmethod
     def get_instruction(self):
         """
         Returns instruction based on available commands
-        :return: str
+        :return:
         """
 
     @property
-    @abstractclassmethod
+    @abstractmethod
     def scrapper_name(self):
         """
         Returns scrapper name
@@ -36,9 +36,9 @@ class EroScrapper(ABC):
         """
 
     @property
-    @abstractclassmethod
+    @abstractmethod
     def identifier(self):
         """
-        Returns identifier that usees for generate command for using concrete scrapper
+        Returns identifier that will be use to generate bot's coommands
         :return:
         """

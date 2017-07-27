@@ -9,4 +9,3 @@ console_handler = StreamHandler(stdout)
 console_handler.setFormatter(logger_format)
 logger.addHandler(console_handler)
 
-__all__ = ['logger']

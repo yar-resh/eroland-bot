@@ -14,6 +14,6 @@ class ObuttsCrawler:
         if response.status_code == 200:
             result = response.json()
 
-        urls = ['noise/' + element['preview'].split('/')[1] for element in result]
+        urls = [element['preview'] for element in result]
         return urls
 

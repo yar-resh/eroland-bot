@@ -1,13 +1,8 @@
-from pydoc import cram
 from sys import argv
 from sys import exit
-from os import makedirs
 from os.path import dirname
-from os.path import basename
 from os.path import abspath
-from os.path import isfile
 from os.path import isdir
-from os.path import exists
 from os import listdir
 from os import remove
 from requests import Session, codes
@@ -22,21 +17,19 @@ from EroBot import EroBot
 from OboobsCrawler import OboobsCrawler
 from ObuttsCrawler import ObuttsCrawler
 
+TIMEOUT = 120
 
-CHUNK_SIZE = 1024 * 48500
-CONTENT_DIR = dirname(abspath(__file__)) + '/content'
-
-bot = EroBot()
 boobs_crawler = OboobsCrawler()
 butts_crawler = ObuttsCrawler()
 session = Session()
+
 
 def _get_extension(content_type: str):
     extension = re.split('[/ ;]', content_type)[1]
     return '.' + extension
 
 
-def save_image(url:str, path:str):
+def save_image(url: str, path: str):
     response = session.get(url, stream=True)
     if response.status_code == codes.ok and response.raw:
         name = md5(url.encode()).hexdigest()
@@ -65,18 +58,23 @@ def clear_directory(path: str):
 
 
 def parse_updates(updates_result):
-    if 'ok' in updates_result and updates_result['ok'] == True:
+    if 'ok' in updates_result and updates_result['ok'] is True:
         updates = updates_result['result']
         results = []
         for update in updates:
-            result = {
-                'chat_id': update['message']['chat']['id'],
-                'text': update['message'].get('text', ''),
-                'update_id': update['update_id']
-            }
-            results.append(result)
+            message = update.get('message', None)
+            if not message:
+                message = update.get('edited_message', None)
+            if message:
+                result = {
+                    'chat_id': message['chat']['id'],
+                    'text': message.get('text', ''),
+                    'update_id': update['update_id']
+                }
+                results.append(result)
         return results
     return []
+
 
 def get_boobs():
     preview_urls = boobs_crawler.crawl_noise()
@@ -97,18 +95,19 @@ def get_butts():
 
 
 def main():
-    # # If previously removing was unsuccessful
-    # clear_directory(CONTENT_DIR)
-    #
-    #
-    # # Remove all files
-    # clear_directory(CONTENT_DIR)
+    if len(argv) < 2:
+        logger.warning('Usage: python3 itd-eroland-bot.py <bot_token>')
+        exit()
+
+    token = argv[1]
+    bot = EroBot(token=token)
 
     while True:
-        updates_result = bot.get_updates(bot.last_update_id + 1)
+        updates_result = bot.get_updates(bot.last_update_id + 1, timeout=TIMEOUT)
         if updates_result:
             for update in parse_updates(updates_result):
-                bot.last_update_id = update['update_id'] if update['update_id'] > bot.last_update_id else bot.last_update_id
+                bot.last_update_id = update['update_id'] if update[
+                                                                'update_id'] > bot.last_update_id else bot.last_update_id
                 if update['text'] in ['/boobs', '/noise']:
                     urls = get_boobs()
                     for url in urls:
@@ -125,19 +124,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
-# {"ok":true,"result":[
-#     {
-#         "update_id":384222016,
-#         "message":
-#             {
-#                 "message_id":12,
-#                 "from":{"id":112106805,"first_name":"\u042f\u0440\u0438\u043a","last_name":"\u0420\u0435\u0448\u0435\u0442\u043d\u0438\u043a","username":"yar_resh","language_code":"en"},
-#                 "chat":{"id":112106805,"first_name":"\u042f\u0440\u0438\u043a","last_name":"\u0420\u0435\u0448\u0435\u0442\u043d\u0438\u043a","username":"yar_resh","type":"private"},
-#                 "date":1498651525,
-#                 "text":"/help",
-#                 "entities":[{"type":"bot_command","offset":0,"length":5}]}},
-#     {
-#         "update_id":384222017,
-# "message":{"message_id":13,"from":{"id":112106805,"first_name":"\u042f\u0440\u0438\u043a","last_name":"\u0420\u0435\u0448\u0435\u0442\u043d\u0438\u043a","username":"yar_resh","language_code":"en"},"chat":{"id":112106805,"first_name":"\u042f\u0440\u0438\u043a","last_name":"\u0420\u0435\u0448\u0435\u0442\u043d\u0438\u043a","username":"yar_resh","type":"private"},"date":1498654449,"text":"/noise","entities":[{"type":"bot_command","offset":0,"length":6}]}}]}
