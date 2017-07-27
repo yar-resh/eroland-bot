@@ -5,8 +5,6 @@ from time import sleep
 
 class EroBot:
     _TELEGRAM_REQUEST_URL = 'https://api.telegram.org'
-    # _BOT_TOKEN = '386770232:AAEYVJB1OhHYILEzO2oUPZpASwVDxflXZLs'
-    # _CHAT_ID = '112106805'
 
     def __init__(self, token: str):
         self._token = token
