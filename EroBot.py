@@ -1,68 +1,60 @@
-from requests import Session
+from telegram import InputMediaPhoto, Update, User, Bot
+from telegram.ext import (Updater, CommandHandler, MessageHandler, Filters, RegexHandler,
+                          ConversationHandler)
+
+from Providers import OBoobsProvider, OButtsProvider
+
 from Logger import logger
-from time import sleep
+
+
+def error(bot, update: Update, error):
+    """Log Errors caused by Updates."""
+    logger.warning('Update "%s" caused error "%s"', update, error)
 
 
 class EroBot:
-    _TELEGRAM_REQUEST_URL = 'https://api.telegram.org'
 
-    def __init__(self, token: str):
-        self._token = token
-        self._session = Session()
-        self.last_update_id = 0
+    def __init__(self, access_token: str):
+        self.updater = Updater(access_token)
+        self.boobs_provider = OBoobsProvider()
+        self.butts_provider = OButtsProvider()
+        self.providers = [self.boobs_provider, self.butts_provider]
+        self._init()
 
-    def _build_request_url(self, method_name: str):
-        return '{base_url}/bot{token}/{method}'.format(
-            base_url = EroBot._TELEGRAM_REQUEST_URL,
-            token = self._token,
-            method = method_name
-        )
+    def _init(self):
+        start_handler = CommandHandler('start', self._start)
+        help_handler = CommandHandler('help', self._help)
+        boobs_handler = CommandHandler('boobs', self._boobs)
+        butts_handler = CommandHandler('butts', self._butts)
 
-    def send_message(self, message: str, chat_id: str, disable_notification: bool=False):
-        url = self._build_request_url(method_name='sendMessage')
-        params = {
-            'chat_id': chat_id,
-            'text': message,
-            'disable_notification': disable_notification
-        }
-        try:
-            result = self._session.get(url=url, params=params)
-            logger.info(result.json())
-        except Exception as e:
-            logger.error(str(e))
+        self.updater.dispatcher.add_handler(start_handler)
+        self.updater.dispatcher.add_handler(help_handler)
+        self.updater.dispatcher.add_handler(boobs_handler)
+        self.updater.dispatcher.add_handler(butts_handler)
+        self.updater.dispatcher.add_error_handler(error)
 
-    def send_file(self, path: str, chat_id: str, disable_notification: bool=False):
-        url = self._build_request_url(method_name='sendDocument')
-        with open(path, 'rb') as file:
-            params = {
-                'chat_id': chat_id,
-                'disable_notification': disable_notification
-            }
-            logger.info('Sending {} to chat with id:{}'.format(path, chat_id))
+    def _start(self, bot: Bot, update: Update):
+        self._help(bot, update)
+
+    def _help(self, bot: Bot, update: Update):
+        update.message.reply('Welcome to ITD-Eroland bot!')
+
+    def _boobs(self, bot: Bot, update: Update):
+        media = [InputMediaPhoto(url) for url in self.boobs_provider.get_random_images(5)]
+        bot.send_media_group(update.message.chat.id, media, disable_notification=True)
+
+    def _butts(self, bot: Bot, update: Update):
+        media = self.butts_provider.get_random_images(5)
+        for image in media:
             try:
-                result = self._session.post(url=url, params=params, files={'document': file})
-                result_json = result.json()
-                if not result_json['ok']:
-                    logger.warn('File uploading was unsuccessful')
-                    logger.warn(result_json['description'])
+                bot.send_photo(update.message.chat.id, image, disable_notification=True)
             except Exception as e:
-                logger.error('Error occurred during request')
-                logger.error(str(e))
+                print(str(e))
 
-            sleep(2)
+        # bot.send_media_group(update.message.chat.id, media, disable_notification=True)
 
-    def get_updates(self, offset: int=0, timeout: int=0):
-        url = self._build_request_url(method_name='getUpdates')
-        try:
-            result = self._session.get(url=url, params={'offset': offset, 'timeout': timeout})
-            if result.status_code == 200:
-                return result.json()
-            else:
-                logger.error(result.text)
-                return None
-        except Exception as e:
-            logger.error(str(e))
-            return None
-
-
+    def start_bot(self, timeout=120, idle=False):
+        self.updater.start_polling(timeout=timeout)
+        if idle:
+            self.updater.idle()
 
