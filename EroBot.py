@@ -1,6 +1,7 @@
 from telegram import InputMediaPhoto, Update, User, Bot
 from telegram.ext import (Updater, CommandHandler, MessageHandler, Filters, RegexHandler,
                           ConversationHandler)
+from telegram.vendor.ptb_urllib3.urllib3 import HTTPConnectionPool
 
 from Providers import OBoobsProvider, OButtsProvider, EroticBeautiesProvider
 
@@ -57,11 +58,16 @@ class EroBot:
         # bot.send_media_group(update.message.chat.id, media, disable_notification=True)
 
     def _beauty(self, bot: Bot, update: Update):
-        media = [InputMediaPhoto(url) for url in self.beauty_provider.get_random_images(5)]
-        bot.send_media_group(update.message.chat.id, media, disable_notification=True)
+        update.message.reply_text('It will take some time. So, wait patiently :)', quote=False)
+        try:
+            media = [InputMediaPhoto(url) for url in self.beauty_provider.get_random_images(5)]
+            bot.send_media_group(update.message.chat.id, media, disable_notification=True)
+        except Exception as e:
+            import traceback
+            traceback.print_last()
+            print(str(e))
 
     def start_bot(self, timeout=120, idle=False):
         self.updater.start_polling(timeout=timeout)
         if idle:
             self.updater.idle()
-
