@@ -2,7 +2,7 @@ from telegram import InputMediaPhoto, Update, User, Bot
 from telegram.ext import (Updater, CommandHandler, MessageHandler, Filters, RegexHandler,
                           ConversationHandler)
 
-from Providers import OBoobsProvider, OButtsProvider
+from Providers import OBoobsProvider, OButtsProvider, EroticBeautiesProvider
 
 from Logger import logger
 
@@ -18,6 +18,7 @@ class EroBot:
         self.updater = Updater(access_token)
         self.boobs_provider = OBoobsProvider()
         self.butts_provider = OButtsProvider()
+        self.beauty_provider = EroticBeautiesProvider()
         self.providers = [self.boobs_provider, self.butts_provider]
         self._init()
 
@@ -26,11 +27,13 @@ class EroBot:
         help_handler = CommandHandler('help', self._help)
         boobs_handler = CommandHandler('boobs', self._boobs)
         butts_handler = CommandHandler('butts', self._butts)
+        beauty_handler = CommandHandler('beauty', self._beauty)
 
         self.updater.dispatcher.add_handler(start_handler)
         self.updater.dispatcher.add_handler(help_handler)
         self.updater.dispatcher.add_handler(boobs_handler)
         self.updater.dispatcher.add_handler(butts_handler)
+        self.updater.dispatcher.add_handler(beauty_handler)
         self.updater.dispatcher.add_error_handler(error)
 
     def _start(self, bot: Bot, update: Update):
@@ -52,6 +55,10 @@ class EroBot:
                 print(str(e))
 
         # bot.send_media_group(update.message.chat.id, media, disable_notification=True)
+
+    def _beauty(self, bot: Bot, update: Update):
+        media = [InputMediaPhoto(url) for url in self.beauty_provider.get_random_images(5)]
+        bot.send_media_group(update.message.chat.id, media, disable_notification=True)
 
     def start_bot(self, timeout=120, idle=False):
         self.updater.start_polling(timeout=timeout)
