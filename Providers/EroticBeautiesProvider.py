@@ -85,9 +85,10 @@ class EroticBeautiesProvider(EroBaseProvider):
                 continue
 
             gallery = bs.find('div', class_='my-gallery')
-            random_image = choice(gallery.find_all('figure'))
-            url = random_image.find('a', recursive=True)['href']
-            print('Image url: ' + url)
-            result_images_urls.append(url)
+            if gallery is not None:
+                random_image = choice(gallery.find_all('figure'))
+                url = random_image.find('a', recursive=True)['href']
+                print('Image url: ' + url)
+                result_images_urls.append(url)
 
         return result_images_urls
