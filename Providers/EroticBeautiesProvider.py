@@ -24,6 +24,7 @@ class EroticBeautiesProvider(EroBaseProvider):
             return self._pages_amount
 
         pages_amount = 0
+        print('Getting pages amount...')
         response = self._session.get(url=self.request_url)
         bs = BeautifulSoup(response.text, 'lxml')
         paginations = bs.find_all(class_='pagination')
@@ -39,6 +40,7 @@ class EroticBeautiesProvider(EroBaseProvider):
         del bs
         del response
         del paginations
+        print('Pages amount: ' + str(pages_amount))
         self._pages_amount = pages_amount
         return pages_amount
 
@@ -48,11 +50,13 @@ class EroticBeautiesProvider(EroBaseProvider):
             random_page_number = randint(1, pages_amount)
             if random_page_number not in random_pages:
                 random_pages.append(random_page_number)
+        print('Random pages: ' + str(random_pages))
         return random_pages
 
     def _get_posts_on_page(self, page_number):
         page = self._page_url_template.format(page_number)
         request_url = self.request_url + page
+        print('Getting post on: ' + request_url)
         response = self._session.get(url=request_url)
         bs = BeautifulSoup(response.text, 'lxml')
         content = bs.find('div',
@@ -69,11 +73,13 @@ class EroticBeautiesProvider(EroBaseProvider):
         random_page_numbers = self._get_random_page_numbers(amount, pages_amount)
 
         for number in random_page_numbers:
-            sleep(1)
+            sleep(2)
             try:
                 posts = self._get_posts_on_page(number)
                 random_post = choice(posts)
-                response = self._session.get(url=random_post.find('a', recursive=True)['href'])
+                post_url = random_post.find('a', recursive=True)['href']
+                print('Getting post content from: ' + post_url)
+                response = self._session.get(url=post_url)
                 bs = BeautifulSoup(response.text, 'lxml')
             except:
                 continue
@@ -81,6 +87,7 @@ class EroticBeautiesProvider(EroBaseProvider):
             gallery = bs.find('div', class_='my-gallery')
             random_image = choice(gallery.find_all('figure'))
             url = random_image.find('a', recursive=True)['href']
+            print('Image url: ' + url)
             result_images_urls.append(url)
 
         return result_images_urls

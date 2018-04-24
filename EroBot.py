@@ -63,8 +63,6 @@ class EroBot:
             media = [InputMediaPhoto(url) for url in self.beauty_provider.get_random_images(5)]
             bot.send_media_group(update.message.chat.id, media, disable_notification=True)
         except Exception as e:
-            import traceback
-            traceback.print_last()
             print(str(e))
 
     def start_bot(self, timeout=120, idle=False):
