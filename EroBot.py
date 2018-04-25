@@ -1,9 +1,7 @@
-from telegram import InputMediaPhoto, Update, User, Bot
-from telegram.ext import (Updater, CommandHandler, MessageHandler, Filters, RegexHandler,
-                          ConversationHandler)
-from telegram.vendor.ptb_urllib3.urllib3 import HTTPConnectionPool
+from telegram import InputMediaPhoto, Update, Bot
+from telegram.ext import (Updater, CommandHandler)
 
-from Providers import OBoobsProvider, OButtsProvider, EroticBeautiesProvider
+from Providers import OBoobsProvider, OButtsProvider, EroticBeautiesProvider, ErolubProvider
 
 from Logger import logger
 
@@ -20,21 +18,21 @@ class EroBot:
         self.boobs_provider = OBoobsProvider()
         self.butts_provider = OButtsProvider()
         self.beauty_provider = EroticBeautiesProvider()
-        self.providers = [self.boobs_provider, self.butts_provider]
+        self.erolub_provider = ErolubProvider()
+        self.providers = [self.boobs_provider, self.butts_provider, self.beauty_provider, self.erolub_provider]
         self._init()
 
     def _init(self):
-        start_handler = CommandHandler('start', self._start)
-        help_handler = CommandHandler('help', self._help)
-        boobs_handler = CommandHandler('boobs', self._boobs)
-        butts_handler = CommandHandler('butts', self._butts)
-        beauty_handler = CommandHandler('beauty', self._beauty)
-
-        self.updater.dispatcher.add_handler(start_handler)
-        self.updater.dispatcher.add_handler(help_handler)
-        self.updater.dispatcher.add_handler(boobs_handler)
-        self.updater.dispatcher.add_handler(butts_handler)
-        self.updater.dispatcher.add_handler(beauty_handler)
+        handlers = (
+            CommandHandler('start', self._start),
+            CommandHandler('help', self._help),
+            CommandHandler('boobs', self._boobs),
+            CommandHandler('butts', self._butts),
+            CommandHandler('beauty', self._beauty),
+            CommandHandler('erolub', self._erolub)
+        )
+        for handler in handlers:
+            self.updater.dispatcher.add_handler(handler)
         self.updater.dispatcher.add_error_handler(error)
 
     def _start(self, bot: Bot, update: Update):
@@ -61,6 +59,14 @@ class EroBot:
         update.message.reply_text('It will take some time. So, wait patiently :)', quote=False)
         try:
             media = [InputMediaPhoto(url) for url in self.beauty_provider.get_random_images(5)]
+            bot.send_media_group(update.message.chat.id, media, disable_notification=True)
+        except Exception as e:
+            print(str(e))
+
+    def _erolub(self, bot: Bot, update: Update):
+        update.message.reply_text('It will take some time. So, wait patiently :)', quote=False)
+        try:
+            media = [InputMediaPhoto(url) for url in self.erolub_provider.get_random_images(5)]
             bot.send_media_group(update.message.chat.id, media, disable_notification=True)
         except Exception as e:
             print(str(e))
