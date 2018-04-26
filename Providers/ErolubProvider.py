@@ -20,6 +20,9 @@ class ErolubProvider(EroBaseProvider):
         self._last_time_checked = datetime.fromtimestamp(1272032894)
 
     def _get_pages_amount(self):
+        # IT'S Workaround
+        return 36
+
         if datetime.now() - self._last_time_checked < CHECKING_PERIOD:
             return self._pages_amount
 
@@ -28,7 +31,7 @@ class ErolubProvider(EroBaseProvider):
         print('Getting pages amount...')
         response = self._session.get(url=self.request_url)
         bs = BeautifulSoup(response.text, 'lxml')
-        pagination_element = bs.find(class_='navigation')
+        pagination_element = bs.find('span', class_='navigation')
         for element in pagination_element:
             if isinstance(element, Tag):
                 try:

@@ -12,6 +12,13 @@ def error(bot, update: Update, error):
 
 
 class EroBot:
+    _HELP_MESSAGE = """Welcome to <b>ITD-Eroland bot!</b>
+List of commands:
+<i>/boobs</i> - returns set of 5 images with boobs
+<i>/butts</i> - returns 5 images with boobs (at this moment all images sends separately)
+<i>/beauty</i> - returns set of 5 images from www.eroticbeauties.net
+<i>/erolub</i> - returns set of 5 images from www.erolub.com/photo/
+<i>/help</i> - prints help message"""
 
     def __init__(self, access_token: str):
         self.updater = Updater(access_token)
@@ -39,7 +46,7 @@ class EroBot:
         self._help(bot, update)
 
     def _help(self, bot: Bot, update: Update):
-        update.message.reply('Welcome to ITD-Eroland bot!')
+        update.message.reply_text(self._HELP_MESSAGE, quote=False, parse_mode='HTML', disable_web_page_preview=True)
 
     def _boobs(self, bot: Bot, update: Update):
         media = [InputMediaPhoto(url) for url in self.boobs_provider.get_random_images(5)]
