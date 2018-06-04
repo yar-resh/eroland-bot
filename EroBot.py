@@ -5,10 +5,25 @@ from Providers import OBoobsProvider, OButtsProvider, EroticBeautiesProvider, Er
 
 from Logger import logger
 
+LOADING_URL = 'http://siski.pro/rnd/animated/125.gif'
+WAIT_TEXT = 'It will take some time. So, wait patiently :)'
+
 
 def error(bot, update: Update, error):
     """Log Errors caused by Updates."""
     logger.warning('Update "%s" caused error "%s"', update, error)
+
+
+def loading(func):
+    def wrapper(self, bot: Bot, update: Update, *args, **kwargs):
+        text = '{}\n\n{}'.format(WAIT_TEXT, LOADING_URL)
+        try:
+            message = update.message.reply_text(text, quote=False)
+            func(self, bot, update)
+            message.delete()
+        except Exception as exc:
+            print(exc)
+    return wrapper
 
 
 class EroBot:
@@ -48,10 +63,12 @@ List of commands:
     def _help(self, bot: Bot, update: Update):
         update.message.reply_text(self._HELP_MESSAGE, quote=False, parse_mode='HTML', disable_web_page_preview=True)
 
+    @loading
     def _boobs(self, bot: Bot, update: Update):
         media = [InputMediaPhoto(url) for url in self.boobs_provider.get_random_images(5)]
         bot.send_media_group(update.message.chat.id, media, disable_notification=True)
 
+    @loading
     def _butts(self, bot: Bot, update: Update):
         media = self.butts_provider.get_random_images(5)
         for image in media:
@@ -62,16 +79,16 @@ List of commands:
 
         # bot.send_media_group(update.message.chat.id, media, disable_notification=True)
 
+    @loading
     def _beauty(self, bot: Bot, update: Update):
-        update.message.reply_text('It will take some time. So, wait patiently :)', quote=False)
         try:
             media = [InputMediaPhoto(url) for url in self.beauty_provider.get_random_images(5)]
             bot.send_media_group(update.message.chat.id, media, disable_notification=True)
         except Exception as e:
             print(str(e))
 
+    @loading
     def _erolub(self, bot: Bot, update: Update):
-        update.message.reply_text('It will take some time. So, wait patiently :)', quote=False)
         try:
             media = [InputMediaPhoto(url) for url in self.erolub_provider.get_random_images(5)]
             bot.send_media_group(update.message.chat.id, media, disable_notification=True)
