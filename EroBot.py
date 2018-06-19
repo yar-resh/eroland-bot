@@ -1,7 +1,7 @@
 from telegram import InputMediaPhoto, Update, Bot
 from telegram.ext import (Updater, CommandHandler)
 
-from Providers import OBoobsProvider, OButtsProvider, EroticBeautiesProvider, ErolubProvider
+from Providers import OBoobsProvider, OButtsProvider, EroticBeautiesProvider, ErolubProvider, KindGirlsProvider
 
 from Logger import logger
 
@@ -41,7 +41,8 @@ List of commands:
         self.butts_provider = OButtsProvider()
         self.beauty_provider = EroticBeautiesProvider()
         self.erolub_provider = ErolubProvider()
-        self.providers = [self.boobs_provider, self.butts_provider, self.beauty_provider, self.erolub_provider]
+        self.kind_provider = KindGirlsProvider()
+        self.providers = [self.boobs_provider, self.butts_provider, self.beauty_provider, self.erolub_provider, self.kind_provider]
         self._init()
 
     def _init(self):
@@ -51,7 +52,8 @@ List of commands:
             CommandHandler('boobs', self._boobs),
             CommandHandler('butts', self._butts),
             CommandHandler('beauty', self._beauty),
-            CommandHandler('erolub', self._erolub)
+            CommandHandler('erolub', self._erolub),
+            CommandHandler('kind', self._kind)
         )
         for handler in handlers:
             self.updater.dispatcher.add_handler(handler)
@@ -91,6 +93,14 @@ List of commands:
     def _erolub(self, bot: Bot, update: Update):
         try:
             media = [InputMediaPhoto(url) for url in self.erolub_provider.get_random_images(5)]
+            bot.send_media_group(update.message.chat.id, media, disable_notification=True)
+        except Exception as e:
+            print(str(e))
+
+    @loading
+    def _kind(self, bot: Bot, update: Update):
+        try:
+            media = [InputMediaPhoto(url) for url in self.kind_provider.get_random_images(5)]
             bot.send_media_group(update.message.chat.id, media, disable_notification=True)
         except Exception as e:
             print(str(e))
