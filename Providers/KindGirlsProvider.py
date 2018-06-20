@@ -14,7 +14,7 @@ class KindGirlsProvider(EroBaseProvider):
         super().__init__()
         self._session = Session()
         self.request_url = 'http://www.kindgirls.com/'
-        self._page_url_template = 'girls/?i=m'
+        self._page_url_template = 'girls/?i={}'
 
     def _get_models_on_page(self, letter):
         page = self._page_url_template.format(letter)
