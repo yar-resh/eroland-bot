@@ -1,0 +1,5 @@
+*$py.class
+*.log
+*.py[cod]
+.idea
+__pycache__/
