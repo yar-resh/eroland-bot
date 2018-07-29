@@ -8,6 +8,7 @@ import time
 import bs4
 import requests
 
+# period for checking new content on websites
 CHECKING_PERIOD = datetime.timedelta(days=7)
 LETTERS = [letter for letter in string.ascii_lowercase if letter != 'q']
 
@@ -39,6 +40,8 @@ class EroBaseProvider(abc.ABC):
 
 
 class ErolubProvider(EroBaseProvider):
+    """Provider for http://erolub.com website."""
+
     def __init__(self):
         super().__init__()
         self._session = requests.Session()
@@ -49,7 +52,7 @@ class ErolubProvider(EroBaseProvider):
         self._last_time_checked = datetime.datetime.fromtimestamp(1272032894)
 
     def _get_pages_amount(self):
-        # IT'S Workaround
+        """Get amount of pages available on website."""
         return 36
 
         if datetime.now() - self._last_time_checked < CHECKING_PERIOD:
@@ -77,6 +80,12 @@ class ErolubProvider(EroBaseProvider):
         return pages_amount
 
     def _get_random_page_numbers(self, amount, pages_amount):
+        """
+        Get random pages
+        :param int amount: amount of pages, that need to be chosen.
+        :param pages_amount: amount of available pages.
+        :return list: list of randomly chosen pages.
+        """
         random_pages = []
         for i in range(amount):
             random_page_number = random.randint(1, pages_amount)
@@ -86,6 +95,11 @@ class ErolubProvider(EroBaseProvider):
         return random_pages
 
     def _get_posts_on_page(self, page_number):
+        """
+        Get all posts on given page identified by number.
+        :param int page_number: number of page.
+        :return list: list of posts available on given page.
+        """
         page = self._page_url_template.format(page_number)
         request_url = self.request_url + page
         print('Getting post on: ' + request_url)
@@ -99,6 +113,11 @@ class ErolubProvider(EroBaseProvider):
         return posts
 
     def get_random_images(self, amount):
+        """
+        Get random images from web site.
+        :param int amount: amount of random images.
+        :return list: list with urls of random images.
+        """
         result_images_urls = []
         pages_amount = self._get_pages_amount()
         random_page_numbers = self._get_random_page_numbers(amount, pages_amount)
@@ -126,6 +145,8 @@ class ErolubProvider(EroBaseProvider):
 
 
 class EroticBeautiesProvider(EroBaseProvider):
+    """Provider for http://www.eroticbeauties.net website."""
+
     def __init__(self):
         super().__init__()
         self._session = requests.Session()
@@ -136,6 +157,7 @@ class EroticBeautiesProvider(EroBaseProvider):
         self._last_time_checked = datetime.datetime.fromtimestamp(1272032894)
 
     def _get_pages_amount(self):
+        """Get amount of pages available on website."""
         if datetime.datetime.now() - self._last_time_checked < CHECKING_PERIOD:
             return self._pages_amount
 
@@ -161,6 +183,12 @@ class EroticBeautiesProvider(EroBaseProvider):
         return pages_amount
 
     def _get_random_page_numbers(self, amount, pages_amount):
+        """
+        Get random pages
+        :param int amount: amount of pages, that need to be chosen.
+        :param pages_amount: amount of available pages.
+        :return list: list of randomly chosen pages.
+        """
         random_pages = []
         for i in range(amount):
             random_page_number = random.randint(1, pages_amount)
@@ -170,6 +198,11 @@ class EroticBeautiesProvider(EroBaseProvider):
         return random_pages
 
     def _get_posts_on_page(self, page_number):
+        """
+        Get all posts on given page identified by number.
+        :param int page_number: number of page.
+        :return list: list of posts available on given page.
+        """
         page = self._page_url_template.format(page_number)
         request_url = self.request_url + page
         print('Getting post on: ' + request_url)
@@ -184,6 +217,11 @@ class EroticBeautiesProvider(EroBaseProvider):
         return posts
 
     def get_random_images(self, amount):
+        """
+        Get random images from web site.
+        :param int amount: amount of random images.
+        :return list: list with urls of random images.
+        """
         result_images_urls = []
         pages_amount = self._get_pages_amount()
         random_page_numbers = self._get_random_page_numbers(amount, pages_amount)
@@ -211,6 +249,8 @@ class EroticBeautiesProvider(EroBaseProvider):
 
 
 class KindGirlsProvider(EroBaseProvider):
+    """Provider for http://www.kindgirls.com website."""
+
     def __init__(self):
         super().__init__()
         self._session = requests.Session()
@@ -218,6 +258,11 @@ class KindGirlsProvider(EroBaseProvider):
         self._page_url_template = 'girls/?i={}'
 
     def _get_models_on_page(self, letter):
+        """
+        Get all models on given page identified by letter.
+        :param letter: letter page to search on.
+        :return list: list of available models on given page.
+        """
         page = self._page_url_template.format(letter)
         request_url = self.request_url + page
         print('Getting post on: ' + request_url)
@@ -229,6 +274,11 @@ class KindGirlsProvider(EroBaseProvider):
         return models
 
     def get_random_images(self, amount):
+        """
+        Get random images from web site.
+        :param int amount: amount of random images.
+        :return list: list with urls of random images.
+        """
         result_images_urls = []
         random_letters = [random.choice(LETTERS) for _ in range(amount)]
 
@@ -252,6 +302,8 @@ class KindGirlsProvider(EroBaseProvider):
 
 
 class RussiaSexyGirlsProvider(EroBaseProvider):
+    """Provider for https://russiasexygirls.com website."""
+
     def __init__(self):
         super().__init__()
         self._session = requests.Session()
@@ -259,6 +311,11 @@ class RussiaSexyGirlsProvider(EroBaseProvider):
         self._page_url_template = '/models/{}/'
 
     def _get_models_on_page(self, letter):
+        """
+        Get all models on given page identified by letter.
+        :param str letter: letter page to search on.
+        :return list: list of available models on given page.
+        """
         page = self._page_url_template.format(letter)
         request_url = self.request_url + page
         print('Getting post on: ' + request_url)
@@ -270,6 +327,11 @@ class RussiaSexyGirlsProvider(EroBaseProvider):
         return models
 
     def get_random_images(self, amount):
+        """
+        Get random images from web site.
+        :param int amount: amount of random images.
+        :return list: list with urls of random images.
+        """
         result_images_urls = []
         random_letters = [random.choice(LETTERS) for _ in range(amount)]
 

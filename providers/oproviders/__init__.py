@@ -3,7 +3,7 @@ import providers
 
 
 class OBaseProvider(providers.EroBaseProvider):
-    """Base provider for oboobs and obutts web sites."""
+    """Base provider for oboobs and obutts websites."""
 
     def __init__(self):
         super().__init__()
@@ -11,7 +11,7 @@ class OBaseProvider(providers.EroBaseProvider):
 
     def get_random_images(self, amount):
         """
-        Get random images from web site.
+        Get random images from website.
         :param int amount: amount of random images
         :return list: list with urls of random images
         """
@@ -49,5 +49,3 @@ OBoobsProvider = type('OBoobsProvider', (OBaseProvider,),
                       {'__init__': _init_factory('http://api.oboobs.ru', 'http://media.oboobs.ru', OBaseProvider)})
 OButtsProvider = type('OButtsProvider', (OBaseProvider,),
                       {'__init__': _init_factory('http://api.obutts.ru', 'http://media.obutts.ru', OBaseProvider)})
-
-__all__ = ['OBaseProvider', 'OBoobsProvider', 'OButtsProvider']
