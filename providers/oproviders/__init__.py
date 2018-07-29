@@ -1,8 +1,8 @@
-"""Providers for http://oboobs.ru and http://obutts.ru"""
-import Providers
+"""providers for http://oboobs.ru and http://obutts.ru"""
+import providers
 
 
-class OBaseProvider(Providers.EroBaseProvider):
+class OBaseProvider(providers.EroBaseProvider):
     """Base provider for oboobs and obutts web sites."""
 
     def __init__(self):
