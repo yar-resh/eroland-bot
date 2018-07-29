@@ -28,19 +28,14 @@ def get_random_page_numbers(amount: int, pages_amount: int):
 class EroBaseProvider(abc.ABC):
     """Base class for all providers."""
 
-    def __init__(self):
-        self._request_url: str = None
+    def __init__(self, request_url: str):
+        self._request_url: str = request_url
         self._session: requests.Session = requests.Session()
 
     @property
     def request_url(self):
         """Get request url."""
         return self._request_url
-
-    @request_url.setter
-    def request_url(self, value: str):
-        """Set request url."""
-        self._request_url = value
 
     @abc.abstractmethod
     def get_random_images(self, amount):
@@ -55,9 +50,7 @@ class ErolubProvider(EroBaseProvider):
     """Provider for http://erolub.com website."""
 
     def __init__(self):
-        super().__init__()
-        self._session = requests.Session()
-        self.request_url = 'http://erolub.com/photo/'
+        super().__init__('http://erolub.com/photo/')
         self._page_url_template = 'page/{}/'
 
         self._pages_amount = 10
@@ -144,9 +137,7 @@ class EroticBeautiesProvider(EroBaseProvider):
     """Provider for http://www.eroticbeauties.net website."""
 
     def __init__(self):
-        super().__init__()
-        self._session = requests.Session()
-        self.request_url = 'http://www.eroticbeauties.net/'
+        super().__init__('http://www.eroticbeauties.net/')
         self._page_url_template = 'page-{}.html'
 
         self._pages_amount = 10
@@ -233,9 +224,7 @@ class KindGirlsProvider(EroBaseProvider):
     """Provider for http://www.kindgirls.com website."""
 
     def __init__(self):
-        super().__init__()
-        self._session = requests.Session()
-        self.request_url = 'http://www.kindgirls.com/'
+        super().__init__('http://www.kindgirls.com/')
         self._page_url_template = 'girls/?i={}'
 
     def _get_models_on_page(self, letter):
@@ -286,9 +275,7 @@ class RussiaSexyGirlsProvider(EroBaseProvider):
     """Provider for https://russiasexygirls.com website."""
 
     def __init__(self):
-        super().__init__()
-        self._session = requests.Session()
-        self.request_url = 'https://russiasexygirls.com'
+        super().__init__('https://russiasexygirls.com')
         self._page_url_template = '/models/{}/'
 
     def _get_models_on_page(self, letter):

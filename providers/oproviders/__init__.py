@@ -5,9 +5,9 @@ import providers
 class OBaseProvider(providers.EroBaseProvider):
     """Base provider for oboobs and obutts websites."""
 
-    def __init__(self):
-        super().__init__()
-        self._base_url: str = None
+    def __init__(self, request_url: str, base_url: str):
+        super().__init__(request_url)
+        self._base_url: str = base_url
 
     def get_random_images(self, amount):
         """
@@ -29,23 +29,16 @@ class OBaseProvider(providers.EroBaseProvider):
         """Base url."""
         return self._base_url
 
-    @base_url.setter
-    def base_url(self, value):
-        """Set base url."""
-        self._base_url = value
 
-
-def _init_factory(request_url: str, base_url: str, base_class):
-    """Construct __init__ methods for classes derived from OBaseProvider"""
+class OBoobsProvider(OBaseProvider):
+    """Provider for http://oboobs.ru website."""
 
     def __init__(self):
-        super(base_class, self).__init__()
-        self.request_url = request_url
-        self.base_url = base_url
-    return __init__
+        super().__init__('http://api.oboobs.ru', 'http://media.oboobs.ru')
 
 
-OBoobsProvider = type('OBoobsProvider', (OBaseProvider,),
-                      {'__init__': _init_factory('http://api.oboobs.ru', 'http://media.oboobs.ru', OBaseProvider)})
-OButtsProvider = type('OButtsProvider', (OBaseProvider,),
-                      {'__init__': _init_factory('http://api.obutts.ru', 'http://media.obutts.ru', OBaseProvider)})
+class OButtsProvider(OBaseProvider):
+    """Provider for http://obutts.ru website."""
+
+    def __init__(self):
+        super().__init__('http://api.obutts.ru', 'http://media.obutts.ru')
