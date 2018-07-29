@@ -53,35 +53,21 @@ class ErolubProvider(EroBaseProvider):
         super().__init__('http://erolub.com/photo/')
         self._page_url_template = 'page/{}/'
 
-        self._pages_amount = 10
-        self._last_time_checked = datetime.datetime.fromtimestamp(1272032894)
+        self._pages_amount = None
+        self._last_time_checked = datetime.datetime.fromtimestamp(0)
 
-    def _get_pages_amount(self):
+    @property
+    def pages_amount(self):
         """Get amount of pages available on website."""
-
-        if datetime.datetime.now() - self._last_time_checked < CHECKING_PERIOD:
-            return self._pages_amount
-
-        pages_amount = 0
-        number = 0
-        print('Getting pages amount...')
-        response = self._session.get(url=self.request_url)
-        bs = bs4.BeautifulSoup(response.text)
-        pagination_element = bs.find('span', class_='navigation')
-        for element in pagination_element:
-            if isinstance(element, bs4.Tag):
-                try:
-                    number = int(element.text)
-                except:
-                    pass
-                if number > pages_amount:
-                    pages_amount = number
-        del bs
-        del response
-        del pagination_element
-        print('Pages amount: ' + str(pages_amount))
-        self._pages_amount = pages_amount
-        return pages_amount
+        if datetime.datetime.now() - self._last_time_checked > CHECKING_PERIOD:
+            print('Getting pages amount...')
+            response = self._session.get(url=self.request_url)
+            bs = bs4.BeautifulSoup(response.text)
+            navigation = bs.find('span', class_='navigation')
+            last_navigation_element = [element for element in navigation if isinstance(element, bs4.Tag)][-1]
+            self._pages_amount = int(last_navigation_element.text)
+        print('Pages amount: ' + str(self._pages_amount))
+        return self._pages_amount
 
     def _get_posts_on_page(self, page_number):
         """
@@ -108,7 +94,7 @@ class ErolubProvider(EroBaseProvider):
         :return list: list with urls of random images.
         """
         result_images_urls = []
-        pages_amount = self._get_pages_amount()
+        pages_amount = self.pages_amount
         random_page_numbers = get_random_page_numbers(amount, pages_amount)
 
         for number in random_page_numbers:
