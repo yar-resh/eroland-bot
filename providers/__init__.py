@@ -65,9 +65,8 @@ class ErolubProvider(EroBaseProvider):
 
     def _get_pages_amount(self):
         """Get amount of pages available on website."""
-        return 36
 
-        if datetime.now() - self._last_time_checked < CHECKING_PERIOD:
+        if datetime.datetime.now() - self._last_time_checked < CHECKING_PERIOD:
             return self._pages_amount
 
         pages_amount = 0
@@ -77,7 +76,7 @@ class ErolubProvider(EroBaseProvider):
         bs = bs4.BeautifulSoup(response.text)
         pagination_element = bs.find('span', class_='navigation')
         for element in pagination_element:
-            if isinstance(element, Tag):
+            if isinstance(element, bs4.Tag):
                 try:
                     number = int(element.text)
                 except:
