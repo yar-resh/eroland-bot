@@ -13,6 +13,18 @@ CHECKING_PERIOD = datetime.timedelta(days=7)
 LETTERS = [letter for letter in string.ascii_lowercase if letter != 'q']
 
 
+def get_random_page_numbers(amount: int, pages_amount: int):
+    """
+    Get random pages
+    :param int amount: amount of pages, that need to be chosen.
+    :param int pages_amount: amount of available pages.
+    :return list: list of randomly chosen pages.
+    """
+    random_pages = [random.randint(1, pages_amount) for _ in range(amount)]
+    print('Random pages: ' + str(random_pages))
+    return random_pages
+
+
 class EroBaseProvider(abc.ABC):
     """Base class for all providers."""
 
@@ -79,21 +91,6 @@ class ErolubProvider(EroBaseProvider):
         self._pages_amount = pages_amount
         return pages_amount
 
-    def _get_random_page_numbers(self, amount, pages_amount):
-        """
-        Get random pages
-        :param int amount: amount of pages, that need to be chosen.
-        :param pages_amount: amount of available pages.
-        :return list: list of randomly chosen pages.
-        """
-        random_pages = []
-        for i in range(amount):
-            random_page_number = random.randint(1, pages_amount)
-            if random_page_number not in random_pages:
-                random_pages.append(random_page_number)
-        print('Random pages: ' + str(random_pages))
-        return random_pages
-
     def _get_posts_on_page(self, page_number):
         """
         Get all posts on given page identified by number.
@@ -120,7 +117,7 @@ class ErolubProvider(EroBaseProvider):
         """
         result_images_urls = []
         pages_amount = self._get_pages_amount()
-        random_page_numbers = self._get_random_page_numbers(amount, pages_amount)
+        random_page_numbers = get_random_page_numbers(amount, pages_amount)
 
         for number in random_page_numbers:
             time.sleep(1)
@@ -182,21 +179,6 @@ class EroticBeautiesProvider(EroBaseProvider):
         self._pages_amount = pages_amount
         return pages_amount
 
-    def _get_random_page_numbers(self, amount, pages_amount):
-        """
-        Get random pages
-        :param int amount: amount of pages, that need to be chosen.
-        :param pages_amount: amount of available pages.
-        :return list: list of randomly chosen pages.
-        """
-        random_pages = []
-        for i in range(amount):
-            random_page_number = random.randint(1, pages_amount)
-            if random_page_number not in random_pages:
-                random_pages.append(random_page_number)
-        print('Random pages: ' + str(random_pages))
-        return random_pages
-
     def _get_posts_on_page(self, page_number):
         """
         Get all posts on given page identified by number.
@@ -224,7 +206,7 @@ class EroticBeautiesProvider(EroBaseProvider):
         """
         result_images_urls = []
         pages_amount = self._get_pages_amount()
-        random_page_numbers = self._get_random_page_numbers(amount, pages_amount)
+        random_page_numbers = get_random_page_numbers(amount, pages_amount)
 
         for number in random_page_numbers:
             time.sleep(2)
