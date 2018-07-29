@@ -1,7 +1,9 @@
 from telegram import InputMediaPhoto, Update, Bot
 from telegram.ext import (Updater, CommandHandler)
 
-from Providers import OBoobsProvider, OButtsProvider, EroticBeautiesProvider, ErolubProvider, KindGirlsProvider, RussiaSexyGirlsProvider
+import Providers
+import Providers.OProviders
+
 
 from Logger import logger
 
@@ -37,12 +39,12 @@ List of commands:
 
     def __init__(self, access_token: str):
         self.updater = Updater(access_token)
-        self.boobs_provider = OBoobsProvider()
-        self.butts_provider = OButtsProvider()
-        self.beauty_provider = EroticBeautiesProvider()
-        self.erolub_provider = ErolubProvider()
-        self.kind_provider = KindGirlsProvider()
-        self.sexy_provider = RussiaSexyGirlsProvider()
+        self.boobs_provider = Providers.OProviders.OBoobsProvider()
+        self.butts_provider = Providers.OProviders.OButtsProvider()
+        self.beauty_provider = Providers.EroticBeautiesProvider()
+        self.erolub_provider = Providers.ErolubProvider()
+        self.kind_provider = Providers.KindGirlsProvider()
+        self.sexy_provider = Providers.RussiaSexyGirlsProvider()
         self.providers = [self.boobs_provider, self.butts_provider, self.beauty_provider, self.erolub_provider, self.kind_provider]
         self._init()
 

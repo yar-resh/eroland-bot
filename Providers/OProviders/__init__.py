@@ -1,5 +1,5 @@
 """Providers for http://oboobs.ru and http://obutts.ru"""
-import Providers.EroBaseProvider
+import Providers
 
 
 class OBaseProvider(Providers.EroBaseProvider):
@@ -11,7 +11,7 @@ class OBaseProvider(Providers.EroBaseProvider):
 
     def get_random_images(self, amount):
         """
-        Get 5 random images from web site.
+        Get random images from web site.
         :param int amount: amount of random images
         :return list: list with urls of random images
         """
