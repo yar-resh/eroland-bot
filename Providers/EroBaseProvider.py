@@ -1,12 +1,13 @@
-from abc import ABC, abstractmethod
-from requests import Session
+import abc
+
+import requests
 
 
-class EroBaseProvider(ABC):
+class EroBaseProvider(abc.ABC):
 
     def __init__(self):
         self._request_url: str = None
-        self._session: Session = Session()
+        self._session: requests.Session = requests.Session()
 
     @property
     def request_url(self):
@@ -16,6 +17,6 @@ class EroBaseProvider(ABC):
     def request_url(self, value):
         self._request_url = value
 
-    @abstractmethod
+    @abc.abstractmethod
     def get_random_images(self, amount):
         ...
