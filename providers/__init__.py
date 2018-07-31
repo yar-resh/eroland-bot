@@ -154,28 +154,18 @@ class EroticBeautiesProvider(EroBaseProvider):
         :return list: list with urls of random images.
         """
         result_images_urls = []
-        pages_amount = self.pages_amount
-        random_page_numbers = get_random_page_numbers(amount, pages_amount)
-
-        for number in random_page_numbers:
+        for number in get_random_page_numbers(amount, self.pages_amount):
             time.sleep(2)
-            try:
-                posts = self._get_posts_on_page(number)
-                random_post = random.choice(posts)
-                post_url = random_post.find('a', recursive=True)['href']
-                print('Getting post content from: ' + post_url)
-                response = self._session.get(url=post_url)
-                bs = bs4.BeautifulSoup(response.text)
-            except:
-                continue
-
+            random_post = random.choice(self._get_posts_on_page(number))
+            post_url = random_post.find('a', recursive=True)['href']
+            print('Getting post content from: ' + post_url)
+            response = self._session.get(url=post_url)
+            bs = bs4.BeautifulSoup(response.text)
             gallery = bs.find('div', class_='my-gallery')
             if gallery is not None:
-                random_image = random.choice(gallery.find_all('figure'))
-                url = random_image.find('a', recursive=True)['href']
-                print('Image url: ' + url)
-                result_images_urls.append(url)
-
+                random_url = random.choice(gallery.find_all('figure')).find('a', recursive=True)['href']
+                print('Image url: ' + random_url)
+                result_images_urls.append(random_url)
         return result_images_urls
 
 
