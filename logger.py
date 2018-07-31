@@ -8,4 +8,3 @@ logger_format = Formatter('%(asctime)s - %(levelname)s - %(lineno)d - %(message)
 console_handler = StreamHandler(stdout)
 console_handler.setFormatter(logger_format)
 logger.addHandler(console_handler)
-

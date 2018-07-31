@@ -8,11 +8,14 @@ import time
 import bs4
 import requests
 
+import logger
+
 # period for checking new content on websites
 CHECKING_PERIOD = datetime.timedelta(days=7)
 # delay between requesting content from websites
 DELAY = 1
 LETTERS = [letter for letter in string.ascii_lowercase if letter != 'q']
+LOGGER = logger.logger
 
 
 def get_random_page_numbers(amount: int, pages_amount: int):
@@ -23,7 +26,7 @@ def get_random_page_numbers(amount: int, pages_amount: int):
     :return list: list of randomly chosen pages.
     """
     random_pages = [random.randint(1, pages_amount) for _ in range(amount)]
-    print('Random pages: ' + str(random_pages))
+    LOGGER.info('Random pages: %s', str(random_pages))
     return random_pages
 
 
@@ -62,13 +65,13 @@ class ErolubProvider(EroBaseProvider):
     def pages_amount(self):
         """Get amount of pages available on website."""
         if datetime.datetime.now() - self._last_time_checked > CHECKING_PERIOD:
-            print('Getting pages amount...')
+            LOGGER.info('Obtaining pages amount...')
             response = self._session.get(url=self.request_url)
             bs = bs4.BeautifulSoup(response.text)
             navigation = bs.find('span', class_='navigation')
             last_navigation_element = [element for element in navigation if isinstance(element, bs4.Tag)][-1]
             self._pages_amount = int(last_navigation_element.text)
-        print('Pages amount: ' + str(self._pages_amount))
+        LOGGER.info('Pages amount: %s', str(self._pages_amount))
         return self._pages_amount
 
     def _get_posts_on_page(self, page_number):
@@ -79,7 +82,7 @@ class ErolubProvider(EroBaseProvider):
         """
         page = self._page_url_template.format(page_number)
         request_url = self.request_url + page
-        print('Getting post on: ' + request_url)
+        LOGGER.info('Obtaining post on: %s', request_url)
         response = self._session.get(url=request_url)
         bs = bs4.BeautifulSoup(response.text)
         content = bs.find('div', {'id': 'dle-content'})
@@ -97,13 +100,13 @@ class ErolubProvider(EroBaseProvider):
             time.sleep(DELAY)
             random_post = random.choice(self._get_posts_on_page(number))
             post_url = random_post.find('a', recursive=True)['href']
-            print('Getting post content from: ' + post_url)
+            LOGGER.info('Obtaining content from: %s', post_url)
             response = self._session.get(url=post_url)
             bs = bs4.BeautifulSoup(response.text)
             gallery = bs.find('div', class_='pw-description clearfix')
             if gallery is not None:
                 random_url = random.choice(gallery.find_all('img'))['src']
-                print('Image url: ' + random_url)
+                LOGGER.info('Image url: %s', random_url)
                 result_images_urls.append('http://erolub.com/' + random_url)
         return result_images_urls
 
@@ -122,7 +125,7 @@ class EroticBeautiesProvider(EroBaseProvider):
     def pages_amount(self):
         """Get amount of pages available on website."""
         if datetime.datetime.now() - self._last_time_checked > CHECKING_PERIOD:
-            print('Getting pages amount...')
+            LOGGER.info('Obtaining pages amount...')
             response = self._session.get(url=self.request_url)
             bs = bs4.BeautifulSoup(response.text)
             paginations = bs.find_all(class_='pagination')
@@ -130,7 +133,7 @@ class EroticBeautiesProvider(EroBaseProvider):
             last_navigation_element = [element for element in navigation
                                        if isinstance(element, bs4.Tag) and element.text.isdigit()][-1]
             self._pages_amount = int(last_navigation_element.text)
-        print('Pages amount: ' + str(self._pages_amount))
+        LOGGER.info('Pages amount: %s', str(self._pages_amount))
         return self._pages_amount
 
     def _get_posts_on_page(self, page_number):
@@ -141,11 +144,11 @@ class EroticBeautiesProvider(EroBaseProvider):
         """
         page = self._page_url_template.format(page_number)
         request_url = self.request_url + page
-        print('Getting post on: ' + request_url)
+        LOGGER.info('Obtaining post on: %s', request_url)
         response = self._session.get(url=request_url)
         bs = bs4.BeautifulSoup(response.text)
-        content = bs.find('div',
-                          class_='col-xs-12 col-sm-8 col-md-5 col-lg-6 pull-left text-center center-block index-content')
+        content = bs.find(
+            'div', class_='col-xs-12 col-sm-8 col-md-5 col-lg-6 pull-left text-center center-block index-content')
         posts = content.find_all('div', class_='gallery-container-V')
         return posts
 
@@ -160,13 +163,13 @@ class EroticBeautiesProvider(EroBaseProvider):
             time.sleep(DELAY)
             random_post = random.choice(self._get_posts_on_page(number))
             post_url = random_post.find('a', recursive=True)['href']
-            print('Getting post content from: ' + post_url)
+            LOGGER.info('Obtaining content from: %s', post_url)
             response = self._session.get(url=post_url)
             bs = bs4.BeautifulSoup(response.text)
             gallery = bs.find('div', class_='my-gallery')
             if gallery is not None:
                 random_url = random.choice(gallery.find_all('figure')).find('a', recursive=True)['href']
-                print('Image url: ' + random_url)
+                LOGGER.info('Image url: %s', random_url)
                 result_images_urls.append(random_url)
         return result_images_urls
 
@@ -186,7 +189,7 @@ class KindGirlsProvider(EroBaseProvider):
         """
         page = self._page_url_template.format(letter)
         request_url = self.request_url + page
-        print('Getting post on: ' + request_url)
+        LOGGER.info('Obtaining post on: %s', request_url)
         response = self._session.get(url=request_url)
         bs = bs4.BeautifulSoup(response.text)
         models = bs.find_all('div', class_='model_list')
@@ -203,15 +206,16 @@ class KindGirlsProvider(EroBaseProvider):
             time.sleep(DELAY)
             random_model = random.choice(self._get_models_on_page(letter))
             model_url = self.request_url + random_model.find('a', recursive=True)['href']
-            print('Getting post content from: ' + model_url)
+            LOGGER.info('Obtaining content from: %s', model_url)
             response = self._session.get(url=model_url)
             bs = bs4.BeautifulSoup(response.text, )
             random_model_post_url = self.request_url + random.choice(
                 bs.find_all('div', class_='gal_list')).find('a')['href']
             response = self._session.get(url=random_model_post_url)
             bs = bs4.BeautifulSoup(response.text)
-            random_image = random.choice(bs.find_all('div', class_='gal_list')).find('img')['src'].replace('/m6', '')
-            result_images_urls.append(random_image)
+            image_url = random.choice(bs.find_all('div', class_='gal_list')).find('img')['src'].replace('/m6', '')
+            LOGGER.info('Image url: %s', image_url)
+            result_images_urls.append(image_url)
         return result_images_urls
 
 
@@ -230,7 +234,7 @@ class RussiaSexyGirlsProvider(EroBaseProvider):
         """
         page = self._page_url_template.format(letter)
         request_url = self.request_url + page
-        print('Getting post on: ' + request_url)
+        LOGGER.info('Obtaining post on: %s', request_url)
         response = self._session.get(url=request_url)
         bs = bs4.BeautifulSoup(response.text)
         models = bs.find('ul', class_='models-list').find_all('li')
@@ -247,7 +251,7 @@ class RussiaSexyGirlsProvider(EroBaseProvider):
             time.sleep(DELAY)
             random_model = random.choice(self._get_models_on_page(letter))
             model_url = random_model.find('a', recursive=True)['href']
-            print('Getting post content from: ' + model_url)
+            LOGGER.info('Obtaining content from: %s', model_url)
             response = self._session.get(url=model_url)
             bs = bs4.BeautifulSoup(response.text)
             random_model_post_url = random.choice(
@@ -255,6 +259,7 @@ class RussiaSexyGirlsProvider(EroBaseProvider):
                     'div', class_='entry-summary')).find('a', class_='read-more-link')['href']
             response = self._session.get(url=random_model_post_url)
             bs = bs4.BeautifulSoup(response.text)
-            random_image = random.choice(bs.find('div', class_='entry-summary').find_all('img'))['src']
-            result_images_urls.append(random_image)
+            image_url = random.choice(bs.find('div', class_='entry-summary').find_all('img'))['src']
+            LOGGER.info('Image url: %s', image_url)
+            result_images_urls.append(image_url)
         return result_images_urls

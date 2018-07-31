@@ -5,7 +5,7 @@ import providers
 import providers.oproviders
 
 
-from Logger import logger
+from logger import logger
 
 LOADING_URL = 'http://siski.pro/rnd/animated/125.gif'
 WAIT_TEXT = 'It will take some time. So, wait patiently :)'
