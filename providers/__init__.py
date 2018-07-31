@@ -82,9 +82,6 @@ class ErolubProvider(EroBaseProvider):
         bs = bs4.BeautifulSoup(response.text)
         content = bs.find('div', {'id': 'dle-content'})
         posts = content.find_all('div', class_='item-box')
-        del response
-        del bs
-        del content
         return posts
 
     def get_random_images(self, amount):
@@ -158,9 +155,6 @@ class EroticBeautiesProvider(EroBaseProvider):
         content = bs.find('div',
                           class_='col-xs-12 col-sm-8 col-md-5 col-lg-6 pull-left text-center center-block index-content')
         posts = content.find_all('div', class_='gallery-container-V')
-        del response
-        del bs
-        del content
         return posts
 
     def get_random_images(self, amount):
@@ -214,8 +208,6 @@ class KindGirlsProvider(EroBaseProvider):
         response = self._session.get(url=request_url)
         bs = bs4.BeautifulSoup(response.text)
         models = bs.find_all('div', class_='model_list')
-        del response
-        del bs
         return models
 
     def get_random_images(self, amount):
@@ -266,8 +258,6 @@ class RussiaSexyGirlsProvider(EroBaseProvider):
         response = self._session.get(url=request_url)
         bs = bs4.BeautifulSoup(response.text)
         models = bs.find('ul', class_='models-list').find_all('li')
-        del response
-        del bs
         return models
 
     def get_random_images(self, amount):
