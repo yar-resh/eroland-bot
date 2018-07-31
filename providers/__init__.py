@@ -10,6 +10,8 @@ import requests
 
 # period for checking new content on websites
 CHECKING_PERIOD = datetime.timedelta(days=7)
+# delay between requesting content from websites
+DELAY = 1
 LETTERS = [letter for letter in string.ascii_lowercase if letter != 'q']
 
 
@@ -92,7 +94,7 @@ class ErolubProvider(EroBaseProvider):
         """
         result_images_urls = []
         for number in get_random_page_numbers(amount, self.pages_amount):
-            time.sleep(1)
+            time.sleep(DELAY)
             random_post = random.choice(self._get_posts_on_page(number))
             post_url = random_post.find('a', recursive=True)['href']
             print('Getting post content from: ' + post_url)
@@ -155,7 +157,7 @@ class EroticBeautiesProvider(EroBaseProvider):
         """
         result_images_urls = []
         for number in get_random_page_numbers(amount, self.pages_amount):
-            time.sleep(2)
+            time.sleep(DELAY)
             random_post = random.choice(self._get_posts_on_page(number))
             post_url = random_post.find('a', recursive=True)['href']
             print('Getting post content from: ' + post_url)
@@ -198,7 +200,7 @@ class KindGirlsProvider(EroBaseProvider):
         """
         result_images_urls = []
         for letter in [random.choice(LETTERS) for _ in range(amount)]:
-            time.sleep(1)
+            time.sleep(DELAY)
             random_model = random.choice(self._get_models_on_page(letter))
             model_url = self.request_url + random_model.find('a', recursive=True)['href']
             print('Getting post content from: ' + model_url)
@@ -242,7 +244,7 @@ class RussiaSexyGirlsProvider(EroBaseProvider):
         """
         result_images_urls = []
         for letter in [random.choice(LETTERS) for _ in range(amount)]:
-            time.sleep(1)
+            time.sleep(DELAY)
             random_model = random.choice(self._get_models_on_page(letter))
             model_url = random_model.find('a', recursive=True)['href']
             print('Getting post content from: ' + model_url)
