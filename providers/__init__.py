@@ -126,34 +126,23 @@ class EroticBeautiesProvider(EroBaseProvider):
         super().__init__('http://www.eroticbeauties.net/')
         self._page_url_template = 'page-{}.html'
 
-        self._pages_amount = 10
-        self._last_time_checked = datetime.datetime.fromtimestamp(1272032894)
+        self._pages_amount = None
+        self._last_time_checked = datetime.datetime.fromtimestamp(0)
 
-    def _get_pages_amount(self):
+    @property
+    def pages_amount(self):
         """Get amount of pages available on website."""
-        if datetime.datetime.now() - self._last_time_checked < CHECKING_PERIOD:
-            return self._pages_amount
-
-        pages_amount = 0
-        print('Getting pages amount...')
-        response = self._session.get(url=self.request_url)
-        bs = bs4.BeautifulSoup(response.text)
-        paginations = bs.find_all(class_='pagination')
-        pagination_element = next((pagination for pagination in paginations if len(pagination.attrs['class']) == 1))
-        for element in pagination_element:
-            if isinstance(element, bs4.Tag):
-                try:
-                    number = int(element.find('a').text)
-                except:
-                    pass
-                if number > pages_amount:
-                    pages_amount = number
-        del bs
-        del response
-        del paginations
-        print('Pages amount: ' + str(pages_amount))
-        self._pages_amount = pages_amount
-        return pages_amount
+        if datetime.datetime.now() - self._last_time_checked > CHECKING_PERIOD:
+            print('Getting pages amount...')
+            response = self._session.get(url=self.request_url)
+            bs = bs4.BeautifulSoup(response.text)
+            paginations = bs.find_all(class_='pagination')
+            navigation = next((pagination for pagination in paginations if len(pagination.attrs['class']) == 1))
+            last_navigation_element = [element for element in navigation
+                                       if isinstance(element, bs4.Tag) and element.text.isdigit()][-1]
+            self._pages_amount = int(last_navigation_element.text)
+        print('Pages amount: ' + str(self._pages_amount))
+        return self._pages_amount
 
     def _get_posts_on_page(self, page_number):
         """
@@ -181,7 +170,7 @@ class EroticBeautiesProvider(EroBaseProvider):
         :return list: list with urls of random images.
         """
         result_images_urls = []
-        pages_amount = self._get_pages_amount()
+        pages_amount = self.pages_amount
         random_page_numbers = get_random_page_numbers(amount, pages_amount)
 
         for number in random_page_numbers:
@@ -245,10 +234,11 @@ class KindGirlsProvider(EroBaseProvider):
             model_url = self.request_url + random_model.find('a', recursive=True)['href']
             print('Getting post content from: ' + model_url)
             response = self._session.get(url=model_url)
-            bs = bs4.BeautifulSoup(response.text,)
-            random_model_post_url = self._request_url + random.choice(bs.find_all('div', class_='gal_list')).find('a')['href']
+            bs = bs4.BeautifulSoup(response.text, )
+            random_model_post_url = self._request_url + random.choice(bs.find_all('div', class_='gal_list')).find('a')[
+                'href']
             response = self._session.get(url=random_model_post_url)
-            bs = bs4.BeautifulSoup(response.text,)
+            bs = bs4.BeautifulSoup(response.text, )
 
             random_image = random.choice(bs.find_all('div', class_='gal_list'))
             random_image: str = random_image.find('img')['src'].replace('/m6', '')
@@ -297,7 +287,10 @@ class RussiaSexyGirlsProvider(EroBaseProvider):
             print('Getting post content from: ' + model_url)
             response = self._session.get(url=model_url)
             bs = bs4.BeautifulSoup(response.text)
-            random_model_post_url = random.choice(bs.find('div', id='main').find_all('div', class_='entry-summary')).find('a', class_='read-more-link')['href']
+            random_model_post_url = \
+            random.choice(bs.find('div', id='main').find_all('div', class_='entry-summary')).find('a',
+                                                                                                  class_='read-more-link')[
+                'href']
             response = self._session.get(url=random_model_post_url)
             bs = bs4.BeautifulSoup(response.text)
 
