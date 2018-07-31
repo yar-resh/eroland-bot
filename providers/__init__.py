@@ -197,25 +197,19 @@ class KindGirlsProvider(EroBaseProvider):
         :return list: list with urls of random images.
         """
         result_images_urls = []
-        random_letters = [random.choice(LETTERS) for _ in range(amount)]
-
-        for letter in random_letters:
+        for letter in [random.choice(LETTERS) for _ in range(amount)]:
             time.sleep(1)
-            models = self._get_models_on_page(letter)
-            random_model = random.choice(models)
+            random_model = random.choice(self._get_models_on_page(letter))
             model_url = self.request_url + random_model.find('a', recursive=True)['href']
             print('Getting post content from: ' + model_url)
             response = self._session.get(url=model_url)
             bs = bs4.BeautifulSoup(response.text, )
-            random_model_post_url = self._request_url + random.choice(bs.find_all('div', class_='gal_list')).find('a')[
-                'href']
+            random_model_post_url = self.request_url + random.choice(
+                bs.find_all('div', class_='gal_list')).find('a')['href']
             response = self._session.get(url=random_model_post_url)
-            bs = bs4.BeautifulSoup(response.text, )
-
-            random_image = random.choice(bs.find_all('div', class_='gal_list'))
-            random_image: str = random_image.find('img')['src'].replace('/m6', '')
+            bs = bs4.BeautifulSoup(response.text)
+            random_image = random.choice(bs.find_all('div', class_='gal_list')).find('img')['src'].replace('/m6', '')
             result_images_urls.append(random_image)
-
         return result_images_urls
 
 
