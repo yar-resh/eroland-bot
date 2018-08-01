@@ -15,9 +15,11 @@ class OBaseProvider(providers.EroBaseProvider):
         :param int amount: amount of random images
         :return list: list with urls of random images
         """
+        providers.LOGGER.info('requesting %s images from %s', amount, self.base_url)
         url = self.request_url + '/noise' + '/{amount}'.format(amount=amount)
         response = self._session.get(url=url)
         result = response.json()
+        providers.LOGGER.info('images reseived: %s', str(result))
         urls = [f'{self.base_url}/noise/{element["preview"].split("/")[1]}' for element in result]
         return urls
 
