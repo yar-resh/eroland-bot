@@ -17,9 +17,6 @@ class OBaseProvider(providers.EroBaseProvider):
         """
         url = self.request_url + '/noise' + '/{amount}'.format(amount=amount)
         response = self._session.get(url=url)
-        if response.status_code != 200:
-            raise RuntimeError
-
         result = response.json()
         urls = [f'{self.base_url}/noise/{element["preview"].split("/")[1]}' for element in result]
         return urls
