@@ -14,6 +14,8 @@ List of commands:
 <i>/butts</i> - returns 5 images with boobs (at this moment all images sends separately)
 <i>/beauty</i> - returns set of 5 images from www.eroticbeauties.net
 <i>/erolub</i> - returns set of 5 images from www.erolub.com/photo/
+<i>/kind</i> - returns set of 5 images http://www.kindgirls.com
+<i>/sexy</i> - returns set of 5 images https://russiasexygirls.com
 <i>/help</i> - prints help message"""
 
 
