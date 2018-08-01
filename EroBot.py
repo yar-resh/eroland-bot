@@ -17,7 +17,7 @@ List of commands:
 <i>/help</i> - prints help message"""
 
 
-def error(bot, update: telegram.Update, error):
+def error_handler(bot, update: telegram.Update, error):
     """Log Errors caused by Updates."""
     LOGGER.error('Update "%s" caused error "%s"', update, error)
 
@@ -59,7 +59,7 @@ class EroBot:
         )
         for handler in handlers:
             self.updater.dispatcher.add_handler(handler)
-        self.updater.dispatcher.add_error_handler(error)
+        self.updater.dispatcher.add_error_handler(error_handler)
 
     def _start(self, bot: telegram.Bot, update: telegram.Update):
         self._help(bot, update)
