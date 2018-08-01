@@ -18,10 +18,9 @@ class OBaseProvider(providers.EroBaseProvider):
         providers.LOGGER.info('requesting %s images from %s', amount, self.base_url)
         url = self.request_url + '/noise' + '/{amount}'.format(amount=amount)
         response = self._session.get(url=url)
-        result = response.json()
-        providers.LOGGER.info('images reseived: %s', str(result))
-        urls = [f'{self.base_url}/noise/{element["preview"].split("/")[1]}' for element in result]
-        return urls
+        images = response.json()
+        providers.LOGGER.info('images reseived: %s', str(images))
+        return [f'{self.base_url}/noise/{image_url["preview"].split("/")[1]}' for image_url in images]
 
     @property
     def base_url(self):
