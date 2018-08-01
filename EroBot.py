@@ -8,6 +8,13 @@ import providers.oproviders
 LOGGER = logger.logger
 LOADING_URL = 'http://siski.pro/rnd/animated/125.gif'
 WAIT_TEXT = 'It will take some time. So, wait patiently :)'
+HELP_MESSAGE = """Welcome to <b>ITD-Eroland bot!</b>
+List of commands:
+<i>/boobs</i> - returns set of 5 images with boobs
+<i>/butts</i> - returns 5 images with boobs (at this moment all images sends separately)
+<i>/beauty</i> - returns set of 5 images from www.eroticbeauties.net
+<i>/erolub</i> - returns set of 5 images from www.erolub.com/photo/
+<i>/help</i> - prints help message"""
 
 
 def error(bot, update: telegram.Update, error):
@@ -28,14 +35,6 @@ def loading(func):
 
 
 class EroBot:
-    _HELP_MESSAGE = """Welcome to <b>ITD-Eroland bot!</b>
-List of commands:
-<i>/boobs</i> - returns set of 5 images with boobs
-<i>/butts</i> - returns 5 images with boobs (at this moment all images sends separately)
-<i>/beauty</i> - returns set of 5 images from www.eroticbeauties.net
-<i>/erolub</i> - returns set of 5 images from www.erolub.com/photo/
-<i>/help</i> - prints help message"""
-
     def __init__(self, access_token: str):
         self.updater = telegram.ext.Updater(access_token)
         self.boobs_provider = providers.oproviders.OBoobsProvider()
@@ -66,7 +65,7 @@ List of commands:
         self._help(bot, update)
 
     def _help(self, bot: telegram.Bot, update: telegram.Update):
-        update.message.reply_text(self._HELP_MESSAGE, quote=False, parse_mode='HTML', disable_web_page_preview=True)
+        update.message.reply_text(HELP_MESSAGE, quote=False, parse_mode='HTML', disable_web_page_preview=True)
 
     @loading
     def _boobs(self, bot: telegram.Bot, update: telegram.Update):
