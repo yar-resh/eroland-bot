@@ -33,7 +33,7 @@ def provider_handler(provider: providers.EroBaseProvider):
             bot.send_media_group(update.message.chat.id, media, disable_notification=True)
             message.delete()
         except Exception as exc:
-            print(exc)
+            LOGGER.error('Error occurred during processing command.\n%s"', str(exc))
     return wrapper
 
 
