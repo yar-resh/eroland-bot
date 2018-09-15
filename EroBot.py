@@ -11,7 +11,6 @@ WAIT_TEXT = 'It will take some time. So, wait patiently :)'
 HELP_MESSAGE = """Welcome to <b>ITD-Eroland bot!</b>
 List of commands:
 <i>/boobs</i> - returns set of 5 images with boobs
-<i>/butts</i> - returns 5 images with boobs (at this moment all images sends separately)
 <i>/beauty</i> - returns set of 5 images from www.eroticbeauties.net
 <i>/erolub</i> - returns set of 5 images from www.erolub.com/photo/
 <i>/kind</i> - returns set of 5 images http://www.kindgirls.com
@@ -40,12 +39,11 @@ class EroBot:
     def __init__(self, access_token: str):
         self.updater = telegram.ext.Updater(access_token)
         self.boobs_provider = providers.oproviders.OBoobsProvider()
-        self.butts_provider = providers.oproviders.OButtsProvider()
         self.beauty_provider = providers.EroticBeautiesProvider()
         self.erolub_provider = providers.ErolubProvider()
         self.kind_provider = providers.KindGirlsProvider()
         self.sexy_provider = providers.RussiaSexyGirlsProvider()
-        self.providers = [self.boobs_provider, self.butts_provider, self.beauty_provider, self.erolub_provider, self.kind_provider]
+        self.providers = [self.boobs_provider, self.beauty_provider, self.erolub_provider, self.kind_provider]
         self._init()
 
     def _init(self):
@@ -53,7 +51,6 @@ class EroBot:
             telegram.ext.CommandHandler('start', self._start),
             telegram.ext.CommandHandler('help', self._help),
             telegram.ext.CommandHandler('boobs', self._boobs),
-            telegram.ext.CommandHandler('butts', self._butts),
             telegram.ext.CommandHandler('beauty', self._beauty),
             telegram.ext.CommandHandler('erolub', self._erolub),
             telegram.ext.CommandHandler('kind', self._kind),
@@ -73,17 +70,6 @@ class EroBot:
     def _boobs(self, bot: telegram.Bot, update: telegram.Update):
         media = [telegram.InputMediaPhoto(url) for url in self.boobs_provider.get_random_images(5)]
         bot.send_media_group(update.message.chat.id, media, disable_notification=True)
-
-    @loading
-    def _butts(self, bot: telegram.Bot, update: telegram.Update):
-        media = self.butts_provider.get_random_images(5)
-        for image in media:
-            try:
-                bot.send_photo(update.message.chat.id, image, disable_notification=True)
-            except Exception as e:
-                print(str(e))
-
-        # bot.send_media_group(update.message.chat.id, media, disable_notification=True)
 
     @loading
     def _beauty(self, bot: telegram.Bot, update: telegram.Update):
