@@ -1,5 +1,6 @@
 """providers """
 import abc
+import os
 import datetime
 import random
 import string
@@ -10,10 +11,8 @@ import requests
 
 import logger
 
-# period for checking new content on websites
-CHECKING_PERIOD = datetime.timedelta(days=7)
-# delay between requesting content from websites
-DELAY = 1
+CHECKING_PERIOD = int(os.environ.get('EROBOT_CHECKING_PERIOD', datetime.timedelta(days=7)))
+TIME_DELAY = int(os.environ.get('EROBOT_TIME_DELAY', 1))
 LETTERS = [letter for letter in string.ascii_lowercase if letter != 'q']
 LOGGER = logger.logger
 
@@ -97,7 +96,7 @@ class ErolubProvider(EroBaseProvider):
         """
         result_images_urls = []
         for number in get_random_page_numbers(amount, self.pages_amount):
-            time.sleep(DELAY)
+            time.sleep(TIME_DELAY)
             random_post = random.choice(self._get_posts_on_page(number))
             post_url = random_post.find('a', recursive=True)['href']
             LOGGER.info('Obtaining content from: %s', post_url)
@@ -160,7 +159,7 @@ class EroticBeautiesProvider(EroBaseProvider):
         """
         result_images_urls = []
         for number in get_random_page_numbers(amount, self.pages_amount):
-            time.sleep(DELAY)
+            time.sleep(TIME_DELAY)
             random_post = random.choice(self._get_posts_on_page(number))
             post_url = random_post.find('a', recursive=True)['href']
             LOGGER.info('Obtaining content from: %s', post_url)
@@ -203,7 +202,7 @@ class KindGirlsProvider(EroBaseProvider):
         """
         result_images_urls = []
         for letter in [random.choice(LETTERS) for _ in range(amount)]:
-            time.sleep(DELAY)
+            time.sleep(TIME_DELAY)
             random_model = random.choice(self._get_models_on_page(letter))
             model_url = self.request_url + random_model.find('a', recursive=True)['href']
             LOGGER.info('Obtaining content from: %s', model_url)
@@ -248,7 +247,7 @@ class RussiaSexyGirlsProvider(EroBaseProvider):
         """
         result_images_urls = []
         for letter in [random.choice(LETTERS) for _ in range(amount)]:
-            time.sleep(DELAY)
+            time.sleep(TIME_DELAY)
             random_model = random.choice(self._get_models_on_page(letter))
             model_url = random_model.find('a', recursive=True)['href']
             LOGGER.info('Obtaining content from: %s', model_url)

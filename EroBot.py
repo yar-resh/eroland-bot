@@ -1,3 +1,5 @@
+import os
+
 import telegram
 import telegram.ext
 
@@ -6,9 +8,9 @@ import providers
 import providers.oproviders
 
 LOGGER = logger.logger
-IMAGES_NUMBER = 5
-LOADING_URL = 'http://siski.pro/rnd/animated/125.gif'
-WAIT_TEXT = 'It will take some time. So, wait patiently :)'
+IMAGES_NUMBER = int(os.environ.get('EROBOT_IMAGES_NUMBER', 5))
+LOADING_URL = os.environ.get('EROBOT_LOADING_URL')
+WAIT_TEXT = os.environ.get('EROBOT_WAIT_TEXT')
 HELP_MESSAGE = """Welcome to <b>ITD-Eroland bot!</b>
 List of commands:
 <i>/boobs</i> - returns set of 5 images with boobs
