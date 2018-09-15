@@ -6,6 +6,7 @@ import providers
 import providers.oproviders
 
 LOGGER = logger.logger
+IMAGES_NUMBER = 5
 LOADING_URL = 'http://siski.pro/rnd/animated/125.gif'
 WAIT_TEXT = 'It will take some time. So, wait patiently :)'
 HELP_MESSAGE = """Welcome to <b>ITD-Eroland bot!</b>
@@ -23,12 +24,13 @@ def error_handler(bot, update: telegram.Update, error):
     LOGGER.error('Update "%s" caused error "%s"', update, error)
 
 
-def loading(func):
-    def wrapper(self, bot: telegram.Bot, update: telegram.Update, *args, **kwargs):
+def provider_handler(provider: providers.EroBaseProvider):
+    def wrapper(bot: telegram.Bot, update: telegram.Update):
         text = '{}\n\n{}'.format(WAIT_TEXT, LOADING_URL)
         try:
-            message = update.message.reply_text(text, quote=False)
-            func(self, bot, update)
+            message = update.message.reply_text(text, quote=False, disable_notification=True)
+            media = [telegram.InputMediaPhoto(url) for url in provider.get_random_images(IMAGES_NUMBER)]
+            bot.send_media_group(update.message.chat.id, media, disable_notification=True)
             message.delete()
         except Exception as exc:
             print(exc)
@@ -50,11 +52,11 @@ class EroBot:
         handlers = (
             telegram.ext.CommandHandler('start', self._start),
             telegram.ext.CommandHandler('help', self._help),
-            telegram.ext.CommandHandler('boobs', self._boobs),
-            telegram.ext.CommandHandler('beauty', self._beauty),
-            telegram.ext.CommandHandler('erolub', self._erolub),
-            telegram.ext.CommandHandler('kind', self._kind),
-            telegram.ext.CommandHandler('sexy', self._sexy)
+            telegram.ext.CommandHandler('boobs', provider_handler(self.boobs_provider)),
+            telegram.ext.CommandHandler('beauty', provider_handler(self.beauty_provider)),
+            telegram.ext.CommandHandler('erolub', provider_handler(self.erolub_provider)),
+            telegram.ext.CommandHandler('kind', provider_handler(self.kind_provider)),
+            telegram.ext.CommandHandler('sexy', provider_handler(self.sexy_provider))
         )
         for handler in handlers:
             self.updater.dispatcher.add_handler(handler)
@@ -65,43 +67,6 @@ class EroBot:
 
     def _help(self, bot: telegram.Bot, update: telegram.Update):
         update.message.reply_text(HELP_MESSAGE, quote=False, parse_mode='HTML', disable_web_page_preview=True)
-
-    @loading
-    def _boobs(self, bot: telegram.Bot, update: telegram.Update):
-        media = [telegram.InputMediaPhoto(url) for url in self.boobs_provider.get_random_images(5)]
-        bot.send_media_group(update.message.chat.id, media, disable_notification=True)
-
-    @loading
-    def _beauty(self, bot: telegram.Bot, update: telegram.Update):
-        try:
-            media = [telegram.InputMediaPhoto(url) for url in self.beauty_provider.get_random_images(5)]
-            bot.send_media_group(update.message.chat.id, media, disable_notification=True)
-        except Exception as e:
-            print(str(e))
-
-    @loading
-    def _erolub(self, bot: telegram.Bot, update: telegram.Update):
-        try:
-            media = [telegram.InputMediaPhoto(url) for url in self.erolub_provider.get_random_images(5)]
-            bot.send_media_group(update.message.chat.id, media, disable_notification=True)
-        except Exception as e:
-            print(str(e))
-
-    @loading
-    def _kind(self, bot: telegram.Bot, update: telegram.Update):
-        try:
-            media = [telegram.InputMediaPhoto(url) for url in self.kind_provider.get_random_images(5)]
-            bot.send_media_group(update.message.chat.id, media, disable_notification=True)
-        except Exception as e:
-            print(str(e))
-
-    @loading
-    def _sexy(self, bot: telegram.Bot, update: telegram.Update):
-        try:
-            media = [telegram.InputMediaPhoto(url) for url in self.sexy_provider.get_random_images(5)]
-            bot.send_media_group(update.message.chat.id, media, disable_notification=True)
-        except Exception as e:
-            print(str(e))
 
     def start_bot(self, timeout=120, idle=False):
         self.updater.start_polling(timeout=timeout)
