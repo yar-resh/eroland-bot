@@ -11,7 +11,7 @@ import requests
 
 import logger
 
-CHECKING_PERIOD = int(os.environ.get('EROBOT_CHECKING_PERIOD', 0))
+CHECKING_PERIOD = datetime.timedelta(seconds=int(os.environ.get('EROBOT_CHECKING_PERIOD', 0)))
 TIME_DELAY = int(os.environ.get('EROBOT_TIME_DELAY', 1))
 LETTERS = [letter for letter in string.ascii_lowercase if letter != 'q']
 LOGGER = logger.logger
