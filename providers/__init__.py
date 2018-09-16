@@ -85,7 +85,7 @@ class ErolubProvider(EroBaseProvider):
         response = self._session.get(url=request_url)
         bs = bs4.BeautifulSoup(response.text)
         content = bs.find('div', {'id': 'dle-content'})
-        posts = content.find_all('div', class_='item-box')
+        posts = content.find_all('div', class_='short')
         return posts
 
     def get_random_images(self, amount):
@@ -102,7 +102,7 @@ class ErolubProvider(EroBaseProvider):
             LOGGER.info('Obtaining content from: %s', post_url)
             response = self._session.get(url=post_url)
             bs = bs4.BeautifulSoup(response.text)
-            gallery = bs.find('div', class_='pw-description clearfix')
+            gallery = bs.find('div', class_='full-text video-box clearfix')
             if gallery is not None:
                 random_url = random.choice(gallery.find_all('img'))['src']
                 LOGGER.info('Image url: %s', random_url)
