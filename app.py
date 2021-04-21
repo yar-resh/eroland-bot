@@ -1,6 +1,6 @@
 from sys import argv
 
-from EroBot import EroBot
+from ero_bot import EroBot
 
 
 def main():
