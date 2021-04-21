@@ -165,7 +165,7 @@ class EroticBeautiesProvider(EroBaseProvider):
             LOGGER.info('Obtaining content from: %s', post_url)
             response = self._session.get(url=post_url)
             parser = bs4.BeautifulSoup(response.text)
-            gallery = parser.find('div', class_='my-gallery')
+            gallery = parser.find('div', class_='gallery')
             if gallery is not None:
                 random_url = random.choice(gallery.find_all('figure')).find('a', recursive=True)['href']
                 LOGGER.info('Image url: %s', random_url)
